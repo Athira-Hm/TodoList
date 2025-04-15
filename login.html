@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body>
+  <div class="font-sans md:m-auto mt-50 px-2">
+    <div class="relative min-h-screen flex flex-col sm:justify-center items-center bg-gray-100">
+      <div class="relative sm:max-w-sm w-full">
+        <div class="card bg-purple-500 shadow-lg w-full h-full rounded-3xl absolute transform -rotate-6"></div>
+        <div class="card bg-pink-500 shadow-lg w-full h-full rounded-3xl absolute transform rotate-6"></div>
+        <div class="relative w-full rounded-3xl px-6 py-4 bg-gray-100 shadow-md">
+          <label for="" class="block mt-3 text-sm text-gray-700 text-center font-semibold">
+            Masuk
+          </label>
+          <form id="loginForm" class="mt-10">
+            <div>
+              <input type="email" id="email" placeholder="email" class="mt-1 block w-full border-none bg-gray-100 h-11 rounded-xl shadow-lg hover:bg-blue-100 focus:bg-blue-100 focus:ring-0">
+            </div>
+            <div class="mt-7">
+              <input type="password" id="password" placeholder="password" class="mt-1 block w-full border-none bg-gray-100 h-11 rounded-xl shadow-lg hover:bg-blue-100 focus:bg-blue-100 focus:ring-0">
+            </div>
+            <div class="mt-7">
+              <button type="submit" class="bg-stone-800 w-full py-3 rounded-xl text-white shadow-xl hover:shadow-inner focus:outline-none transition duration-500 ease-in-out transform hover:-translate-x hover:scale-105">
+                Login
+              </button>
+            </div>
+            <div class="mt-7">
+              <div class="flex justify-center items-center">
+                <label class="mr-2">Belum Punya Akun?</label>
+                <a href="register.html" class="text-blue-500 transition duration-500 ease-in-out transform hover:-translate-x hover:scale-105">
+                  Daftar
+                </a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="auth.js"></script>
+</body>
+</html>
