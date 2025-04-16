@@ -1,5 +1,10 @@
 import { BASE_URL, getToken } from './utils.js';
 
+if (!getToken()) {
+  alert("Silakan login terlebih dahulu.");
+  window.location.href = "login.html";
+}
+
 document.addEventListener('DOMContentLoaded', loadTodos);
 
 window.createTodo = async function () {
@@ -20,14 +25,17 @@ window.createTodo = async function () {
   loadTodos();
 };
 
-window.updateTodo = async function (id, checked) {
+window.updateTodo = async function (id, checked, text = null) {
+  const body = { onCheckList: checked };
+  if (text !== null) body.text = text;
+
   await fetch(`${BASE_URL}/todo/updateTodo/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${getToken()}`
     },
-    body: JSON.stringify({ onCheckList: checked })
+    body: JSON.stringify(body)
   });
 
   loadTodos();
@@ -42,6 +50,13 @@ window.deleteTodo = async function (id) {
   });
 
   loadTodos();
+};
+
+window.editTodo = async function (id, oldText) {
+  const newText = prompt("Edit todo:", oldText);
+  if (newText && newText !== oldText) {
+    await updateTodo(id, false, newText);
+  }
 };
 
 window.logout = async function () {
@@ -64,7 +79,7 @@ async function loadTodos() {
     }
   });
 
-  const { data: todos } = await res.json(); // ✅ AMAN
+  const { data: todos } = await res.json();
   const list = document.getElementById('todoList');
   list.innerHTML = '';
 
@@ -72,12 +87,20 @@ async function loadTodos() {
     const li = document.createElement('li');
     li.className = 'flex justify-between items-center bg-gray-50 p-2 rounded border';
 
+    const createdDate = new Date(todo.createdAt || Date.now()).toLocaleString();
+
     li.innerHTML = `
-      <div class="flex items-center gap-2">
-        <input type="checkbox" ${todo.onCheckList ? 'checked' : ''} onchange="updateTodo('${todo._id}', this.checked)" />
-        <span class="${todo.onCheckList ? 'line-through text-gray-400' : ''}">${todo.text}</span>
+      <div class="flex flex-col gap-1">
+        <div class="flex items-center gap-2">
+          <input type="checkbox" ${todo.onCheckList ? 'checked' : ''} onchange="updateTodo('${todo._id}', this.checked)" />
+          <span class="${todo.onCheckList ? 'line-through text-gray-400' : ''}">${todo.text}</span>
+        </div>
+        <span class="text-xs text-gray-400">${createdDate}</span>
       </div>
-      <button onclick="deleteTodo('${todo._id}')" class="text-red-500 hover:text-red-700">Hapus</button>
+      <div class="flex gap-2">
+        <button onclick="editTodo('${todo._id}', '${todo.text}')" class="text-blue-500 hover:text-blue-700">Edit</button>
+        <button onclick="deleteTodo('${todo._id}')" class="text-red-500 hover:text-red-700">Hapus</button>
+      </div>
     `;
 
     list.appendChild(li);
