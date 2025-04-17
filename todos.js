@@ -1,108 +1,101 @@
-import { BASE_URL, getToken } from './utils.js';
+document.addEventListener('DOMContentLoaded', () => {
+  const taskInput = document.getElementById('taskInput');
+  const addBtn = document.getElementById('addBtn');
+  const taskList = document.getElementById('taskList');
+  const filterDropdown = document.getElementById('filterDropdown');
 
-if (!getToken()) {
-  alert("Silakan login terlebih dahulu.");
-  window.location.href = "login.html";
-}
+  let tasks = [];
 
-document.addEventListener('DOMContentLoaded', loadTodos);
+  function renderTasks() {
+    const filterValue = filterDropdown.value;
+    taskList.innerHTML = '';
 
-window.createTodo = async function () {
-  const input = document.getElementById('todoInput');
-  const text = input.value.trim();
-  if (!text) return;
+    tasks
+      .filter(task => {
+        if (filterValue === 'completed') return task.completed;
+        if (filterValue === 'incomplete') return !task.completed;
+        return true;
+      })
+      .forEach((task, index) => {
+        const taskItem = document.createElement('div');
+        taskItem.className = 'task-item';
 
-  await fetch(`${BASE_URL}/todo/createTodo`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${getToken()}`
-    },
-    body: JSON.stringify({ text })
-  });
+        const taskLeft = document.createElement('div');
+        taskLeft.className = 'task-left';
 
-  input.value = '';
-  loadTodos();
-};
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = task.completed;
+        checkbox.addEventListener('change', () => toggleTask(index));
 
-window.updateTodo = async function (id, checked, text = null) {
-  const body = { onCheckList: checked };
-  if (text !== null) body.text = text;
+        const taskText = document.createElement('span');
+        taskText.textContent = task.text;
+        if (task.completed) {
+          taskText.style.textDecoration = 'line-through';
+          taskText.style.color = '#888';
+        }
+        taskText.addEventListener('click', () => toggleTask(index));
 
-  await fetch(`${BASE_URL}/todo/updateTodo/${id}`, {
-    method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${getToken()}`
-    },
-    body: JSON.stringify(body)
-  });
+        taskLeft.appendChild(checkbox);
+        taskLeft.appendChild(taskText);
 
-  loadTodos();
-};
+        const buttons = document.createElement('div');
+        buttons.className = 'task-buttons';
 
-window.deleteTodo = async function (id) {
-  await fetch(`${BASE_URL}/todo/deleteTodo/${id}`, {
-    method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${getToken()}`
-    }
-  });
+        const editBtn = document.createElement('button');
+        editBtn.className = 'edit-btn';
+        editBtn.textContent = 'Edit';
+        editBtn.addEventListener('click', () => editTask(index));
 
-  loadTodos();
-};
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.textContent = 'Hapus';
+        deleteBtn.addEventListener('click', () => deleteTask(index));
 
-window.editTodo = async function (id, oldText) {
-  const newText = prompt("Edit todo:", oldText);
-  if (newText && newText !== oldText) {
-    await updateTodo(id, false, newText);
+        buttons.appendChild(editBtn);
+        buttons.appendChild(deleteBtn);
+
+        taskItem.appendChild(taskLeft);
+        taskItem.appendChild(buttons);
+
+        taskList.appendChild(taskItem);
+      });
   }
-};
 
-window.logout = async function () {
-  const userId = localStorage.getItem('userId');
-  await fetch(`${BASE_URL}/auth/logout/${userId}`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${getToken()}`
+  function addTask() {
+    const text = taskInput.value.trim();
+    if (text) {
+      tasks.push({ text, completed: false });
+      taskInput.value = '';
+      renderTasks();
     }
-  });
+  }
 
-  localStorage.clear();
-  window.location.href = 'login.html';
-};
+  function toggleTask(index) {
+    tasks[index].completed = !tasks[index].completed;
+    renderTasks();
+  }
 
-async function loadTodos() {
-  const res = await fetch(`${BASE_URL}/todo/getAllTodos`, {
-    headers: {
-      Authorization: `Bearer ${getToken()}`
+  function editTask(index) {
+    const newText = prompt('Edit task:', tasks[index].text);
+    if (newText !== null) {
+      tasks[index].text = newText.trim();
+      renderTasks();
     }
+  }
+
+  function deleteTask(index) {
+    if (confirm('Yakin ingin menghapus task ini?')) {
+      tasks.splice(index, 1);
+      renderTasks();
+    }
+  }
+
+  addBtn.addEventListener('click', addTask);
+  taskInput.addEventListener('keypress', e => {
+    if (e.key === 'Enter') addTask();
   });
+  filterDropdown.addEventListener('change', renderTasks);
 
-  const { data: todos } = await res.json();
-  const list = document.getElementById('todoList');
-  list.innerHTML = '';
-
-  todos.forEach(todo => {
-    const li = document.createElement('li');
-    li.className = 'flex justify-between items-center bg-gray-50 p-2 rounded border';
-
-    const createdDate = new Date(todo.createdAt || Date.now()).toLocaleString();
-
-    li.innerHTML = `
-      <div class="flex flex-col gap-1">
-        <div class="flex items-center gap-2">
-          <input type="checkbox" ${todo.onCheckList ? 'checked' : ''} onchange="updateTodo('${todo._id}', this.checked)" />
-          <span class="${todo.onCheckList ? 'line-through text-gray-400' : ''}">${todo.text}</span>
-        </div>
-        <span class="text-xs text-gray-400">${createdDate}</span>
-      </div>
-      <div class="flex gap-2">
-        <button onclick="editTodo('${todo._id}', '${todo.text}')" class="text-blue-500 hover:text-blue-700">Edit</button>
-        <button onclick="deleteTodo('${todo._id}')" class="text-red-500 hover:text-red-700">Hapus</button>
-      </div>
-    `;
-
-    list.appendChild(li);
-  });
-}
+  renderTasks();
+});
