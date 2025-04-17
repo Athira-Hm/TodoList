@@ -1,59 +1,123 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <title>My Todos</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <title>My Todo List</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #e0eafc, #cfdef3);
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+    .input-section, .filter-section, .tasks-section, .info {
+      margin-bottom: 20px;
+    }
+    .input-wrapper {
+      display: flex;
+      align-items: center;
+    }
+    #taskInput {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    #addBtn {
+      padding: 10px 15px;
+      font-size: 16px;
+      background-color: #2f80ed;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      margin-left: 5px;
+      cursor: pointer;
+    }
+    .filter-section select {
+      padding: 8px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    .task-item {
+      background: #f8f9fa;
+      padding: 10px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .task-left {
+      display: flex;
+      align-items: center;
+      flex-grow: 1;
+    }
+    .task-left span {
+      margin-left: 10px;
+      word-break: break-word;
+    }
+    .task-buttons {
+      display: flex;
+    }
+    .edit-btn, .delete-btn {
+      margin-left: 5px;
+      padding: 5px 10px;
+      font-size: 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .edit-btn {
+      background-color: #f0ad4e;
+      color: white;
+    }
+    .delete-btn {
+      background-color: #d9534f;
+      color: white;
+    }
+    .info {
+      font-style: italic;
+      color: #555;
+    }
+  </style>
 </head>
-<body class="bg-gradient-to-br from-blue-100 to-purple-100 min-h-screen p-8 font-sans"></body>
-  <div class="max-w-2xl mx-auto">
-    <!-- Header Card -->
-    <div class="bg-white rounded-t-2xl shadow-lg p-6 border border-gray-200">
-      <div class="flex justify-between items-center">
-        <h1 class="text-3xl font-bold text-gray-800">My Todo List</h1>
-        <button onclick="logout()" 
-            class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all duration-300 flex items-center gap-2 shadow-md">
-          <i class="fas fa-sign-out-alt"></i> 
-          Logout
-        </button>
+<body>
+  <div class="container">
+    <h1>My Todo List</h1>
+    <div class="input-section">
+      <div class="input-wrapper">
+        <input type="text" id="taskInput" placeholder="What needs to be done?" />
+        <button id="addBtn">+ Add</button>
       </div>
     </div>
 
-    <!-- Input Card -->
-    <div class="bg-white p-6 border-x border-gray-200">
-      <div class="flex gap-2">
-        <input id="todoInput" 
-             type="text" 
-             placeholder="What needs to be done?" 
-             class="flex-1 p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 focus:border-blue-500 transition-all duration-300" />
-        <button onclick="createTodo()" 
-            class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-all duration-300 shadow-md flex items-center gap-2">
-          <i class="fas fa-plus"></i>
-          Add
-        </button>
-      </div>
+    <div class="filter-section">
+      <select id="filterDropdown">
+        <option value="all">Semua</option>
+        <option value="incomplete">Belum Selesai</option>
+        <option value="completed">Selesai</option>
+      </select>
     </div>
 
-    <!-- Tasks Card -->
-    <div class="bg-white rounded-b-2xl shadow-lg p-6 border border-gray-200">
-      <h2 class="text-xl font-semibold text-gray-700 mb-4">My Tasks</h2>
-      <div class="bg-gray-50 rounded-xl p-4">
-        <ul id="todoList" class="space-y-3">
-          <!-- Todo items will be inserted here by JavaScript -->
-        </ul>
-      </div>
+    <div class="tasks-section" id="taskList"></div>
 
-      <div class="mt-6 text-center text-sm text-gray-500">
-        <p class="flex items-center justify-center gap-2">
-          <i class="fas fa-info-circle"></i>
-          Click on a task to mark it as complete
-        </p>
-      </div>
+    <div class="info">
+      <i>✔️ Klik pada task untuk menandai sebagai selesai</i>
     </div>
   </div>
 
-  <script type="module" src="todos.js"></script>
+  <script src="todos.js"></script>
 </body>
 </html>
