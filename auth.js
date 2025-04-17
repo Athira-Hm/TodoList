@@ -1,5 +1,6 @@
 import { BASE_URL, setToken, setUserId } from './utils.js';
 
+
 async function register() {
   const fullName = document.getElementById('fullName').value;
   const email = document.getElementById('email').value;
@@ -18,6 +19,7 @@ async function register() {
     window.location.href = 'login.html';
   }
 }
+
 
 async function login(event) {
   event.preventDefault();
@@ -59,12 +61,13 @@ async function login(event) {
 
 async function logout() {
   const token = localStorage.getItem('token');
+
   // Karena userId tidak tersedia dari login, kita perlu menyesuaikan logika logout
-  // Misalnya, coba tanpa userId atau ambil dari token jika diperlukan
-  await fetch(`${BASE_URL}/auth/logout`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${token}` }
-  });
+  // // Misalnya, coba tanpa userId atau ambil dari token jika diperlukan
+  // await fetch(`${BASE_URL}/auth/logout`, {
+  //   method: 'POST',
+  //   headers: { Authorization: `Bearer ${token}` }
+  // });
 
   localStorage.clear();
   window.location.href = 'login.html';
@@ -87,3 +90,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.register = register;
 window.logout = logout;
+window.goto = goto; 
